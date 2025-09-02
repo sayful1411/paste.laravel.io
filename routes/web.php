@@ -9,3 +9,4 @@ Route::get('{paste}', [PastesController::class, 'show'])->name('show');
 Route::get('{paste}/raw', [PastesController::class, 'raw'])->name('raw');
 Route::get('fork/{paste}', [PastesController::class, 'edit'])->name('edit');
 Route::post('fork/{paste}', [PastesController::class, 'fork']);
+Route::post('/pastes/{paste}/unlock', [PastesController::class, 'unlock'])->name('pastes.unlock');

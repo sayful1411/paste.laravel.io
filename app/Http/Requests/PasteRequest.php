@@ -21,6 +21,9 @@ class PasteRequest extends FormRequest
     {
         return [
             'code' => 'required|max:50000',
+            'expiry' => 'nullable|in:1_hour,1_day,1_week,never,custom',
+            'custom_expiry' => 'nullable|date',
+            'password' => 'nullable|string|min:6',
         ];
     }
 }

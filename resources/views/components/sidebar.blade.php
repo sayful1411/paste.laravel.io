@@ -5,7 +5,15 @@
     </a>
 </div>
 
-{!! $errors->first('code', '<p class="mt-4 text-red-600 font-medium text-center">:message</p>') !!}
+@if ($errors->any())
+    <div class="mt-4 text-red-600 font-medium text-center">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 
 <nav class="mt-4" aria-label="Sidebar">
     <div class="space-y-1">

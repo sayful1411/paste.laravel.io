@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -58,6 +59,10 @@ class Paste extends Model
         }
 
         $paste->color_scheme = $request->input('color_scheme');
+        
+        if ($request->filled('password')) {
+            $paste->password = Hash::make($request->password);
+        }
 
         $paste->save();
 
