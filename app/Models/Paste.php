@@ -37,32 +37,9 @@ class Paste extends Model
     {
         $paste->code = $request->get('code');
         $paste->hash = Uuid::uuid4()->toString();
-
-        switch ($request->input('expiry')) {
-            case '1_hour':
-                $paste->expires_at = now()->addHour();
-                break;
-            case '1_day':
-                $paste->expires_at = now()->addDay();
-                break;
-            case '1_week':
-                $paste->expires_at = now()->addWeek();
-                break;
-            case 'custom':
-                $customExpiry = $request->input('custom_expiry');
-                $paste->expires_at = $customExpiry ? Carbon::parse($customExpiry) : null;
-                break;
-            case 'never':
-            default:
-                $paste->expires_at = null;
-                break;
-        }
-
+        $paste->expires_at = self::parseExpiry($request);
         $paste->color_scheme = $request->input('color_scheme');
-        
-        if ($request->filled('password')) {
-            $paste->password = Hash::make($request->password);
-        }
+        $paste->password = self::hashPasswordIfProvided($request);
 
         $paste->save();
 
@@ -75,5 +52,25 @@ class Paste extends Model
     public function getRouteKeyName(): string
     {
         return 'hash';
+    }
+
+    private static function parseExpiry(Request $request): ?Carbon
+    {
+        return match ($request->input('expiry')) {
+            '1_hour' => now()->addHour(),
+            '1_day' => now()->addDay(),
+            '1_week' => now()->addWeek(),
+            'custom' => $request->filled('custom_expiry') 
+                ? Carbon::parse($request->input('custom_expiry')) 
+                : null,
+            default => null,
+        };
+    }
+
+    private static function hashPasswordIfProvided(Request $request): ?string
+    {
+        return $request->filled('password') 
+            ? Hash::make($request->password) 
+            : null;
     }
 }
