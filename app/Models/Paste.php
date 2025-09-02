@@ -57,6 +57,8 @@ class Paste extends Model
                 break;
         }
 
+        $paste->color_scheme = $request->input('color_scheme');
+
         $paste->save();
 
         return $paste;
