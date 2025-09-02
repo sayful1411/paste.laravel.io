@@ -17,7 +17,8 @@
         "league/flysystem-aws-s3-v3": "^3.0",
         "ramsey/uuid": "^4.3",
         "sentry/sentry-laravel": "^4.3",
-        "spatie/laravel-ignition": "^2.4"
+        "spatie/laravel-ignition": "^2.4",
+        "torchlight/torchlight-laravel": "^0.6.1"
     },
     "require-dev": {
         "doctrine/dbal": "^3.5",
