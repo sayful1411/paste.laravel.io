@@ -18,16 +18,28 @@ class PastesController extends Controller
 
     public function show(Paste $paste): View
     {
+        if ($paste->expires_at && now()->greaterThan($paste->expires_at)) {
+            abort(404, 'This paste has expired.');
+        }
+
         return view('show', compact('paste'));
     }
 
     public function raw(Paste $paste): View
     {
+        if ($paste->expires_at && now()->greaterThan($paste->expires_at)) {
+            abort(404, 'This paste has expired.');
+        }
+
         return view('raw', compact('paste'));
     }
 
     public function edit(Paste $paste): View
     {
+        if ($paste->expires_at && now()->greaterThan($paste->expires_at)) {
+            abort(404, 'This paste has expired.');
+        }
+
         return view('edit', compact('paste'));
     }
 

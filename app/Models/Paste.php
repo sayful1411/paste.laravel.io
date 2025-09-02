@@ -41,9 +41,6 @@ class Paste extends Model
             case '1_hour':
                 $paste->expires_at = now()->addHour();
                 break;
-            case '5_minutes':
-                $paste->expires_at = now()->addMinutes(5);
-                break;
             case '1_day':
                 $paste->expires_at = now()->addDay();
                 break;
