@@ -6,6 +6,8 @@
             <option value="github-dark">GitHub Dark</option>
             <option value="material-theme-palenight">Palenight</option>
             <option value="dracula">Dracula</option>
+            <option value="nord">Nord</option>
+            <option value="liver-dark">Liver Dark</option>
         </select>
     </div>
 </div>

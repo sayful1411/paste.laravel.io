@@ -3,10 +3,9 @@
 @section('content')
     <div x-data="{ isOpen: false }" class="h-screen flex overflow-hidden">
         <x-main>
-            <pre
-                id="code"
-                class="h-full font-mono text-sm prettyprint linenums selectable" data-line-numbers="true"
-            ><code>{{ $paste->code }}</code></pre>
+            <x-torchlight-code language='php' theme='{{ $paste->color_scheme ?? "github-dark" }}' style="white-space: pre;">
+                {!! $paste->code !!}
+            </x-torchlight-code>
         </x-main>
 
         <x-nav>
