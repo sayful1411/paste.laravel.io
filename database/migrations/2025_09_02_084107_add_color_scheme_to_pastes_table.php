@@ -12,7 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('pastes', function (Blueprint $table) {
-            //
+            if (!Schema::hasColumn('pastes', 'color_scheme')) {
+                $table->string('color_scheme')->nullable()->after('code');
+            }
         });
     }
 
@@ -22,7 +24,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('pastes', function (Blueprint $table) {
-            //
+            if (Schema::hasColumn('pastes', 'color_scheme')) {
+                $table->dropColumn('color_scheme');
+            }
         });
     }
 };
