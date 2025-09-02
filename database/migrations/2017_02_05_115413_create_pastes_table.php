@@ -15,6 +15,7 @@ return new class extends Migration
             $table->text('code');
             $table->string('hash')->nullable();
             $table->string('ip')->nullable();
+            $table->timestamp('expires_at')->nullable();
             $table->timestamps();
         });
     }

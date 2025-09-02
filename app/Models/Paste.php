@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
+use Carbon\Carbon;
 use Ramsey\Uuid\Uuid;
+use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Paste extends Model
 {
@@ -35,6 +36,29 @@ class Paste extends Model
     {
         $paste->code = $request->get('code');
         $paste->hash = Uuid::uuid4()->toString();
+
+        switch ($request->input('expiry')) {
+            case '1_hour':
+                $paste->expires_at = now()->addHour();
+                break;
+            case '5_minutes':
+                $paste->expires_at = now()->addMinutes(5);
+                break;
+            case '1_day':
+                $paste->expires_at = now()->addDay();
+                break;
+            case '1_week':
+                $paste->expires_at = now()->addWeek();
+                break;
+            case 'custom':
+                $customExpiry = $request->input('custom_expiry');
+                $paste->expires_at = $customExpiry ? Carbon::parse($customExpiry) : null;
+                break;
+            case 'never':
+            default:
+                $paste->expires_at = null;
+                break;
+        }
 
         $paste->save();
 
