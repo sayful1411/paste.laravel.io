@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Enums\ColorScheme;
 use Carbon\Carbon;
 use Ramsey\Uuid\Uuid;
+use App\Enums\ExpiryOption;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Model;
@@ -19,6 +21,12 @@ class Paste extends Model
      * @var string
      */
     protected $table = 'pastes';
+
+    protected $casts = [
+        'expiry' => ExpiryOption::class,  
+        'color_scheme' => ColorScheme::class,
+        'custom_expiry' => 'immutable_datetime', 
+    ];
 
     public static function fromRequest(Request $request): self
     {

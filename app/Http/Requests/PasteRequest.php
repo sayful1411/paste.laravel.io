@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\ColorScheme;
+use App\Enums\ExpiryOption;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
 
 class PasteRequest extends FormRequest
 {
@@ -21,7 +24,8 @@ class PasteRequest extends FormRequest
     {
         return [
             'code' => 'required|max:50000',
-            'expiry' => 'nullable|in:1_hour,1_day,1_week,never,custom',
+            'color_scheme' => ['nullable', new Enum(ColorScheme::class)],
+            'expiry' => ['nullable', new Enum(ExpiryOption::class)],
             'custom_expiry' => 'nullable|date',
             'password' => 'nullable|string|min:6',
         ];

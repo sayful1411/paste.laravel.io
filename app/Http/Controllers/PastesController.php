@@ -2,18 +2,36 @@
 
 namespace App\Http\Controllers;
 
+use App\DTOs\CreatePasteDataDTO;
+use App\Enums\ColorScheme;
+use App\Enums\ExpiryOption;
 use App\Models\Paste;
+use GuzzleHttp\Promise\Create;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use App\Http\Requests\PasteRequest;
+use App\Services\PasteService;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\RedirectResponse;
 
 class PastesController extends Controller
 {
+    public function __construct(private PasteService $pasteService) {}
+
     public function post(PasteRequest $request): RedirectResponse
     {
-        $paste = Paste::fromRequest($request);
+        $validated = $request->validated();
+
+        $data = new CreatePasteDataDTO(
+            code: $validated['code'],
+            colorScheme: ColorScheme::fromInput($validated['color_scheme']),
+            expiryOption: ExpiryOption::fromInput($validated['expiry']),
+            customExpiry: $validated['custom_expiry'] ?
+                \Carbon\CarbonImmutable::parse($validated['custom_expiry']) : null,
+            passwordPlain: $validated['password'],
+        );
+
+        $paste = $this->pasteService->create($data);
 
         return redirect()->route('show', $paste->hash);
     }
