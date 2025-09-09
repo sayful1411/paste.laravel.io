@@ -10,7 +10,7 @@ enum ColorScheme: string
     case NORD = 'nord';
     case LIVER_DARK = 'liver-dark';
 
-    public static function fromInput(?string $value): self
+    public static function fromInput(?string $value): self|null
     {
         return match ($value) {
             'github-dark' => self::GITHUB_DARK,
@@ -18,7 +18,7 @@ enum ColorScheme: string
             'dracula' => self::DRACULA,
             'nord' => self::NORD,
             'liver-dark' => self::LIVER_DARK,
-            default => self::GITHUB_DARK,
+            default => null,
         };
     }
 }

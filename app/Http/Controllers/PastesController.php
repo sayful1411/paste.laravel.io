@@ -6,7 +6,6 @@ use App\DTOs\CreatePasteDataDTO;
 use App\Enums\ColorScheme;
 use App\Enums\ExpiryOption;
 use App\Models\Paste;
-use GuzzleHttp\Promise\Create;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use App\Http\Requests\PasteRequest;

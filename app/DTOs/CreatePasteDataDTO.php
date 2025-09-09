@@ -10,7 +10,7 @@ class CreatePasteDataDTO
 {
     public function __construct(
         public readonly string $code,
-        public readonly ColorScheme $colorScheme = ColorScheme::GITHUB_DARK,
+        public readonly ?ColorScheme $colorScheme = null,
         public readonly ExpiryOption $expiryOption = ExpiryOption::NEVER,
         public readonly ?CarbonImmutable $customExpiry = null,
         public readonly ?string $passwordPlain = null,
