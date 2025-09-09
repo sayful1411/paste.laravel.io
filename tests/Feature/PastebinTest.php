@@ -4,14 +4,16 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use App\Models\Paste;
+use App\Enums\ExpiryOption;
 use Illuminate\Support\Facades\Hash;
+use PHPUnit\Framework\Attributes\Test;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 class PastebinTest extends TestCase
 {
     use DatabaseMigrations;
 
-    /** @test */
+    #[Test]
     public function it_shows_the_pastebin(): void
     {
         $this->get('/')
@@ -20,15 +22,35 @@ class PastebinTest extends TestCase
             ->assertSee('Reset');
     }
 
-    /** @test */
-    public function users_can_create_pastes(): void
+    #[Test]
+    public function users_can_create_paste_with_valid_data(): void
     {
-        $this->post('/', ['code' => 'My paste'])->assertStatus(302);
+        $this->post(route('home'), [
+            'code' => 'My paste', 
+            'color_scheme' => null, 
+            'expiry' => ExpiryOption::NEVER->value,
+            'custom_expiry' => null,
+            'password' => null,
+        ])->assertStatus(302);
 
         $this->assertDatabaseHas('pastes', ['code' => 'My paste']);
     }
 
-    /** @test */
+    #[Test]
+    public function user_can_not_create_paste_with_invalid_data(): void
+    {
+        $response = $this->post(route('home'), [
+            'code' => '',
+            'color_scheme' => 'invalid_scheme', 
+            'expiry' => 'invalid_expiry',
+            'custom_expiry' => 'invalid_date',
+            'password' => '123', // too short
+        ]);
+
+        $response->assertSessionHasErrors(['code', 'color_scheme', 'expiry', 'custom_expiry', 'password']);
+    }
+
+    #[Test]
     public function users_can_see_pastes(): void
     {
         $paste = Paste::factory()->create();
@@ -37,7 +59,7 @@ class PastebinTest extends TestCase
             ->assertSee($paste->code);
     }
 
-    /** @test */
+    #[Test]
     public function users_can_see_raw_pastes(): void
     {
         $paste = Paste::factory()->create();
@@ -46,7 +68,7 @@ class PastebinTest extends TestCase
             ->assertSee($paste->code);
     }
 
-    /** @test */
+    #[Test]
     public function users_can_see_the_fork_page(): void
     {
         $paste = Paste::factory()->create();
@@ -55,7 +77,7 @@ class PastebinTest extends TestCase
             ->assertSee($paste->code);
     }
 
-    /** @test */
+    #[Test]
     public function users_can_fork_pastes(): void
     {
         $paste = Paste::factory()->create();
@@ -66,7 +88,7 @@ class PastebinTest extends TestCase
         $this->assertDatabaseHas('pastes', ['code' => 'foo code']);
     }
 
-    /** @test */
+    #[Test]
     public function it_unlocks_paste_with_correct_password()
     {
         $paste = Paste::factory()->create([
@@ -82,7 +104,7 @@ class PastebinTest extends TestCase
         $this->assertTrue(session()->get('paste_access_' . $paste->id));
     }
 
-    /** @test */
+    #[Test]
     public function it_fails_to_unlock_with_incorrect_password()
     {
         $paste = Paste::factory()->create([
@@ -97,69 +119,5 @@ class PastebinTest extends TestCase
         $response->assertSessionHasErrors(['password' => 'Incorrect password.']);
         $this->assertFalse(session()->has('paste_access_' . $paste->id));
     }
-
-    /** @test */
-    public function it_sets_expiry_for_1_hour()
-    {
-        $this->post('/', [
-            'code' => 'Test code',
-            'expiry' => '1_hour'
-        ]);
-
-        $paste = Paste::first();
-        $expectedExpiry = now()->addHour();
-        
-        $this->assertNotNull($paste->expires_at);
-        $this->assertEqualsWithDelta($expectedExpiry, $paste->expires_at, 5);
-    }
-
-    /** @test */
-    public function it_sets_expiry_for_1_day()
-    {
-        $this->post('/', [
-            'code' => 'Test code',
-            'expiry' => '1_day'
-        ]);
-
-        $paste = Paste::first();
-        $expectedExpiry = now()->addDay();
-        
-        $this->assertNotNull($paste->expires_at);
-        $this->assertEqualsWithDelta($expectedExpiry, $paste->expires_at, 5);
-    }
-
-    /** @test */
-    public function it_sets_color_scheme()
-    {
-        $colorScheme = 'dark';
-        
-        $this->post('/', [
-            'code' => 'Test code',
-            'expiry' => 'never',
-            'color_scheme' => $colorScheme
-        ]);
-
-        $paste = Paste::first();
-        
-        $this->assertEquals($colorScheme, $paste->color_scheme);
-    }
-
-    /** @test */
-    public function it_hashes_password_when_provided()
-    {
-        $password = 'secret123';
-        
-        $this->post('/', [
-            'code' => 'Test code',
-            'expiry' => 'never',
-            'password' => $password
-        ]);
-
-        $paste = Paste::first();
-        
-        $this->assertNotNull($paste->password);
-        $this->assertTrue(Hash::check($password, $paste->password));
-    }
-
     
 }

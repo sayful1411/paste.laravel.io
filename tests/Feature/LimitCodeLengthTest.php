@@ -3,10 +3,11 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class LimitCodeLengthTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function it_disallows_long_code_posts(): void
     {
         $code = file_get_contents(__DIR__.'/../artifacts/long_text.txt');
